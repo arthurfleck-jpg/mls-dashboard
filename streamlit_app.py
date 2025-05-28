@@ -77,19 +77,19 @@ if len(selected_dates) == 2:
                 st.metric(
                     label=f"{match['home_team']} Win",
                     value=f"{match['home_win_prob']:.1%}",
-                    delta=f"Odds: {match['home_odds']:.2f}"
+                    delta=f"Model Odds: {match['home_odds']:.2f}"
                 )
             
             with col2:
                 st.metric(
                     label="Draw",
                     value=f"{match['draw_prob']:.1%}",
-                    delta=f"Odds: {match['draw_odds']:.2f}"
+                    delta=f"Model Odds: {match['draw_odds']:.2f}"
                 )
             
             with col3:
                 st.metric(
                     label=f"{match['away_team']} Win",
                     value=f"{match['away_win_prob']:.1%}",
-                    delta=f"Odds: {match['away_odds']:.2f}"
+                    delta=f"Model Odds: {match['away_odds']:.2f}"
                 )
