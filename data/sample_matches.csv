@@ -1,0 +1,11 @@
+match_time,home_team,away_team,home_win_prob,away_win_prob,draw_prob,home_odds,away_odds,draw_odds
+2024-03-20 19:30:00,LA Galaxy,Inter Miami,0.45,0.35,0.20,2.22,2.86,5.00
+2024-03-20 20:00:00,New York City FC,Seattle Sounders,0.40,0.40,0.20,2.50,2.50,5.00
+2024-03-21 19:30:00,Atlanta United,Portland Timbers,0.55,0.25,0.20,1.82,4.00,5.00
+2024-03-21 20:00:00,FC Cincinnati,Los Angeles FC,0.35,0.45,0.20,2.86,2.22,5.00
+2024-03-22 19:30:00,New York Red Bulls,DC United,0.50,0.30,0.20,2.00,3.33,5.00
+2024-03-22 20:00:00,Chicago Fire,Columbus Crew,0.30,0.50,0.20,3.33,2.00,5.00
+2024-03-23 19:30:00,Orlando City,New England Revolution,0.45,0.35,0.20,2.22,2.86,5.00
+2024-03-23 20:00:00,Philadelphia Union,Toronto FC,0.60,0.20,0.20,1.67,5.00,5.00
+2024-03-24 19:30:00,Real Salt Lake,San Jose Earthquakes,0.55,0.25,0.20,1.82,4.00,5.00
+2024-03-24 20:00:00,Sporting Kansas City,Minnesota United,0.40,0.40,0.20,2.50,2.50,5.00 
