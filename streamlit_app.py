@@ -14,20 +14,22 @@ st.set_page_config(
 
 @st.cache_data
 def load_match_data():
-    """Load match data from the sample CSV file.
+    """Load match data from the MLS data CSV file.
     
     Expected CSV columns:
     - match_time: datetime
     - home_team: string
     - away_team: string
-    - home_win_prob: float
-    - away_win_prob: float
-    - draw_prob: float
-    - home_odds: float
-    - away_odds: float
-    - draw_odds: float
+    - Home Win Probability: float
+    - Away Win Probability: float
+    - Draw Probability: float
+    - Home_model_odds: float
+    - Away_model_odds: float
+    - Draw_model_odds: float
+    - home_goal: float (optional)
+    - away_goal: float (optional)
     """
-    DATA_FILENAME = Path(__file__).parent/'data/sample_matches.csv'
+    DATA_FILENAME = Path(__file__).parent/'data/major_league_soccer_data.csv'
     df = pd.read_csv(DATA_FILENAME)
     # Convert match_time to datetime if it's not already
     df['match_time'] = pd.to_datetime(df['match_time'])
@@ -70,26 +72,34 @@ if len(selected_dates) == 2:
     st.header('Match Predictions', divider='gray')
     
     for _, match in filtered_matches.iterrows():
-        with st.expander(f"{match['home_team']} vs {match['away_team']} - {match['match_time'].strftime('%Y-%m-%d %H:%M')}"):
+        # 检查比赛是否已结束（通过检查 home_goal 和 away_goal 是否有值）
+        is_match_finished = pd.notna(match['home_goal']) and pd.notna(match['away_goal'])
+        
+        # 构建比赛标题
+        match_title = f"{match['home_team']} vs {match['away_team']} - {match['match_time'].strftime('%Y-%m-%d %H:%M')}"
+        if is_match_finished:
+            match_title += f" (Final Score: {int(match['home_goal'])} - {int(match['away_goal'])})"
+        
+        with st.expander(match_title):
             col1, col2, col3 = st.columns(3)
             
             with col1:
                 st.metric(
                     label=f"{match['home_team']} Win",
-                    value=f"{match['home_win_prob']:.1%}",
-                    delta=f"Model Odds: {match['home_odds']:.2f}"
+                    value=f"{match['Home Win Probability']:.1%}",
+                    delta=f"Model Odds: {match['Home_model_odds']:.2f}"
                 )
             
             with col2:
                 st.metric(
                     label="Draw",
-                    value=f"{match['draw_prob']:.1%}",
-                    delta=f"Model Odds: {match['draw_odds']:.2f}"
+                    value=f"{match['Draw Probability']:.1%}",
+                    delta=f"Model Odds: {match['Draw_model_odds']:.2f}"
                 )
             
             with col3:
                 st.metric(
                     label=f"{match['away_team']} Win",
-                    value=f"{match['away_win_prob']:.1%}",
-                    delta=f"Model Odds: {match['away_odds']:.2f}"
+                    value=f"{match['Away Win Probability']:.1%}",
+                    delta=f"Model Odds: {match['Away_model_odds']:.2f}"
                 )
