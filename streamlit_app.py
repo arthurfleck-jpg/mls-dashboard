@@ -13,8 +13,8 @@ st.set_page_config(
 # Declare some useful functions.
 
 @st.cache_data
-def load_match_data(uploaded_file):
-    """Load match data from uploaded CSV file.
+def load_match_data():
+    """Load match data from the sample CSV file.
     
     Expected CSV columns:
     - match_time: datetime
@@ -27,12 +27,11 @@ def load_match_data(uploaded_file):
     - away_odds: float
     - draw_odds: float
     """
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-        # Convert match_time to datetime if it's not already
-        df['match_time'] = pd.to_datetime(df['match_time'])
-        return df
-    return None
+    DATA_FILENAME = Path(__file__).parent/'data/sample_matches.csv'
+    df = pd.read_csv(DATA_FILENAME)
+    # Convert match_time to datetime if it's not already
+    df['match_time'] = pd.to_datetime(df['match_time'])
+    return df
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -41,78 +40,70 @@ def load_match_data(uploaded_file):
 '''
 # :soccer: MLS Odds Predictor
 
-Upload your match prediction data to view and analyze the odds. This dashboard helps you
-visualize and compare predicted probabilities and corresponding odds for MLS matches.
+View and analyze the odds for upcoming MLS matches. This dashboard helps you
+visualize and compare predicted probabilities and corresponding odds.
 '''
 
-# Add file uploader
-uploaded_file = st.file_uploader("Upload your match prediction data (CSV)", type=['csv'])
+# Load the match data
+match_df = load_match_data()
 
-if uploaded_file is not None:
-    match_df = load_match_data(uploaded_file)
+# Add date range selector
+min_date = match_df['match_time'].min().date()
+max_date = match_df['match_time'].max().date()
+
+selected_dates = st.date_input(
+    'Select date range',
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date
+)
+
+if len(selected_dates) == 2:
+    start_date, end_date = selected_dates
+    # Filter matches within selected date range
+    filtered_matches = match_df[
+        (match_df['match_time'].dt.date >= start_date) &
+        (match_df['match_time'].dt.date <= end_date)
+    ]
     
-    if match_df is not None:
-        # Add date range selector
-        min_date = match_df['match_time'].min().date()
-        max_date = match_df['match_time'].max().date()
-        
-        selected_dates = st.date_input(
-            'Select date range',
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date
-        )
-        
-        if len(selected_dates) == 2:
-            start_date, end_date = selected_dates
-            # Filter matches within selected date range
-            filtered_matches = match_df[
-                (match_df['match_time'].dt.date >= start_date) &
-                (match_df['match_time'].dt.date <= end_date)
-            ]
-            
-            # Display matches in a table
-            st.header('Match Predictions', divider='gray')
-            
-            for _, match in filtered_matches.iterrows():
-                with st.expander(f"{match['home_team']} vs {match['away_team']} - {match['match_time'].strftime('%Y-%m-%d %H:%M')}"):
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        st.metric(
-                            label=f"{match['home_team']} Win",
-                            value=f"{match['home_win_prob']:.1%}",
-                            delta=f"Odds: {match['home_odds']:.2f}"
-                        )
-                    
-                    with col2:
-                        st.metric(
-                            label="Draw",
-                            value=f"{match['draw_prob']:.1%}",
-                            delta=f"Odds: {match['draw_odds']:.2f}"
-                        )
-                    
-                    with col3:
-                        st.metric(
-                            label=f"{match['away_team']} Win",
-                            value=f"{match['away_win_prob']:.1%}",
-                            delta=f"Odds: {match['away_odds']:.2f}"
-                        )
-            
-            # Add summary statistics
-            st.header('Summary Statistics', divider='gray')
-            col1, col2 = st.columns(2)
+    # Display matches in a table
+    st.header('Match Predictions', divider='gray')
+    
+    for _, match in filtered_matches.iterrows():
+        with st.expander(f"{match['home_team']} vs {match['away_team']} - {match['match_time'].strftime('%Y-%m-%d %H:%M')}"):
+            col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.subheader('Average Probabilities')
-                avg_probs = filtered_matches[['home_win_prob', 'draw_prob', 'away_win_prob']].mean()
-                st.bar_chart(avg_probs)
+                st.metric(
+                    label=f"{match['home_team']} Win",
+                    value=f"{match['home_win_prob']:.1%}",
+                    delta=f"Odds: {match['home_odds']:.2f}"
+                )
             
             with col2:
-                st.subheader('Average Odds')
-                avg_odds = filtered_matches[['home_odds', 'draw_odds', 'away_odds']].mean()
-                st.bar_chart(avg_odds)
-    else:
-        st.error("Error loading the CSV file. Please check the file format.")
-else:
-    st.info("Please upload a CSV file to view match predictions.")
+                st.metric(
+                    label="Draw",
+                    value=f"{match['draw_prob']:.1%}",
+                    delta=f"Odds: {match['draw_odds']:.2f}"
+                )
+            
+            with col3:
+                st.metric(
+                    label=f"{match['away_team']} Win",
+                    value=f"{match['away_win_prob']:.1%}",
+                    delta=f"Odds: {match['away_odds']:.2f}"
+                )
+    
+    # Add summary statistics
+    st.header('Summary Statistics', divider='gray')
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader('Average Probabilities')
+        avg_probs = filtered_matches[['home_win_prob', 'draw_prob', 'away_win_prob']].mean()
+        st.bar_chart(avg_probs)
+    
+    with col2:
+        st.subheader('Average Odds')
+        avg_odds = filtered_matches[['home_odds', 'draw_odds', 'away_odds']].mean()
+        st.bar_chart(avg_odds)
