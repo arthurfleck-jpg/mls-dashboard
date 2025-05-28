@@ -89,7 +89,7 @@ if len(selected_dates) == 2:
                     label=f"{match['home_team']} Win",
                     value=f"{match['Home Win Probability']:.1%}",
                     delta=f"Model Odds: {match['Home_model_odds']:.2f}",
-                    delta_color="off"
+                    delta_color="normal"
                 )
             
             with col2:
@@ -97,7 +97,7 @@ if len(selected_dates) == 2:
                     label="Draw",
                     value=f"{match['Draw Probability']:.1%}",
                     delta=f"Model Odds: {match['Draw_model_odds']:.2f}",
-                    delta_color="off"
+                    delta_color="normal"
                 )
             
             with col3:
@@ -105,5 +105,5 @@ if len(selected_dates) == 2:
                     label=f"{match['away_team']} Win",
                     value=f"{match['Away Win Probability']:.1%}",
                     delta=f"Model Odds: {match['Away_model_odds']:.2f}",
-                    delta_color="off"
+                    delta_color="normal"
                 )
