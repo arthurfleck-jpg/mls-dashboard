@@ -93,17 +93,3 @@ if len(selected_dates) == 2:
                     value=f"{match['away_win_prob']:.1%}",
                     delta=f"Odds: {match['away_odds']:.2f}"
                 )
-    
-    # Add summary statistics
-    st.header('Summary Statistics', divider='gray')
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader('Average Probabilities')
-        avg_probs = filtered_matches[['home_win_prob', 'draw_prob', 'away_win_prob']].mean()
-        st.bar_chart(avg_probs)
-    
-    with col2:
-        st.subheader('Average Odds')
-        avg_odds = filtered_matches[['home_odds', 'draw_odds', 'away_odds']].mean()
-        st.bar_chart(avg_odds)
