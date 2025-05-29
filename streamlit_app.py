@@ -62,6 +62,7 @@ match_df = load_match_data()
 min_date = match_df['match_date'].min().date()
 max_date = match_df['match_date'].max().date()
 
+st.markdown("**Created by Jordan Ye**")
 selected_dates = st.date_input(
     'Select date range',
     value=(min_date, max_date),
