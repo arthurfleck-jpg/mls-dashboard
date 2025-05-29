@@ -30,11 +30,19 @@ def load_match_data():
     - home_goal: float (optional)
     - away_goal: float (optional)
     """
-    DATA_FILENAME = Path(__file__).parent/'data/major_league_soccer_data.csv'
-    df = pd.read_csv(DATA_FILENAME)
-    # Convert match_date to datetime
-    df['match_date'] = pd.to_datetime(df['match_date'])
-    return df
+    try:
+        DATA_FILENAME = Path(__file__).parent/'data/major_league_soccer_data.csv'
+        if not DATA_FILENAME.exists():
+            st.error(f"数据文件不存在: {DATA_FILENAME}")
+            return pd.DataFrame()
+            
+        df = pd.read_csv(DATA_FILENAME, encoding='utf-8')
+        # Convert match_date to datetime
+        df['match_date'] = pd.to_datetime(df['match_date'])
+        return df
+    except Exception as e:
+        st.error(f"加载数据时出错: {str(e)}")
+        return pd.DataFrame()
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
